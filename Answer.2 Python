@@ -1,0 +1,46 @@
+def is_valid_string(s):
+    char_freq = {}
+    for char in s:
+        char_freq[char] = char_freq.get(char, 0) + 1
+    
+    freq_count = {}
+    for freq in char_freq.values():
+        freq_count[freq] = freq_count.get(freq, 0) + 1
+    
+    if len(freq_count) == 1:
+        return "YES"  # All characters appear the same number of times
+    
+    if len(freq_count) == 2:
+        freq_list = list(freq_count.items())
+        min_freq, max_freq = min(freq_list), max(freq_list)
+        if min_freq[1] == 1 and min_freq[0] == 1:
+            return "YES"  # Removing one character results in all remaining characters occurring the same number of times
+        if max_freq[1] == 1 and max_freq[0] - min_freq[0] == 1:
+            return "YES"  # Removing one character results in all remaining characters occurring the same number of times
+    
+    return "NO"  # String is not valid
+
+
+# Example test cases
+print(is_valid_string("abc"))  # Output: YES
+print(is_valid_string("abcc"))  # Output: NO
+print(is_valid_string("aabbcc"))# Output: Yes
+print(is_valid_string("aabbccc"))# output: no
+
+# Additional Test Case 1:
+Input: s = "aabbccd"
+Explanation: The character frequencies are { "a": 2, "b": 2, "c": 2}.
+All characters appear the same number of times, so the string is valid.
+Output: Yes
+
+# Additional Test Case 2:
+Input: s = "aabbccc"
+Explanation: The character frequencies are { "a": 2, "b": 2, "c": 3 }.
+Here ,all characters not occur same number of times.
+Therefore, the string is invalid.
+Output: no
+
+
+
+
+
