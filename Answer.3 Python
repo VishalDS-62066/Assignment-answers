@@ -1,0 +1,62 @@
+pip install requests pandas
+import pandas as pd
+import requests
+
+# Step 1: Download the data link
+url = "https://raw.githubusercontent.com/Biuni/PokemonGO-Pokedex/master/pokedex.json"
+response = requests.get(url)
+data = response.json()
+
+# Step 2: Extract the required data attributes from the JSON file downloaded
+pokemon_data = data["pokemon"]
+
+# Step 3: Convert the data into a structured format
+structured_data = []
+for pokemon in pokemon_data:
+    # Extract required attributes
+    pokemon_id = pokemon["id"]
+    num = pokemon["num"]
+    name = pokemon["name"]
+    img = pokemon["img"]
+    pokemon_type = ", ".join(pokemon["type"])
+    height = pokemon["height"]
+    weight = pokemon["weight"]
+    candy = pokemon.get("candy", "")
+    candy_count = pokemon.get("candy_count", 0)
+    egg = pokemon.get("egg", "")
+    spawn_chance = pokemon.get("spawn_chance", 0.0)
+    avg_spawns = pokemon.get("avg_spawns", 0)
+    spawn_time = pokemon.get("spawn_time", "")
+    weaknesses = ", ".join(pokemon.get("weaknesses", []))
+    next_evolution = pokemon.get("next_evolution", [])
+    prev_evolution = pokemon.get("prev_evolution", [])
+
+    # Create a dictionary for each Pokemon
+    pokemon_dict = {
+        "id": pokemon_id,
+        "num": num,
+        "name": name,
+        "img": img,
+        "type": pokemon_type,
+        "height": height,
+        "weight": weight,
+        "candy": candy,
+        "candy_count": candy_count,
+        "egg": egg,
+        "spawn_chance": spawn_chance,
+        "avg_spawns": avg_spawns,
+        "spawn_time": spawn_time,
+        "weaknesses": weaknesses,
+        "next_evolution": next_evolution,
+        "prev_evolution": prev_evolution
+    }
+    structured_data.append(pokemon_dict)
+
+# Step 4: Convert the structured data into a pandas DataFrame
+df = pd.DataFrame(structured_data)
+
+# Step 5: Save the DataFrame to an Excel file
+output_file = "pokemon_data.xlsx"
+df.to_excel(output_file, index=False)
+
+print(f"Data saved successfully to '{output_file}'.")
