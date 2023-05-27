@@ -1,0 +1,24 @@
+def get_length_highest_frequency_word(string):
+    string = ''.join(set(string))
+    words = string.split()
+    word_count = {}
+    for word in words:
+        if word in word_count:
+            word_count[word] += 1
+        else:
+            word_count[word] = 1
+
+    max_frequency = max(word_count.values())  # Find the highest frequency
+
+    max_frequency_word = [word for word, count in word_count.items() if count == max_frequency]
+    max_word_length = len(max_frequency_word[0])    # Find the length of the highest-frequency word
+
+    return max_word_length
+
+# Test case 1
+input_string = "hello world hello world hello"
+print(get_length_highest_frequency_word(input_string))  # Output: 5
+
+# Test case 2
+input_string = "programming is fun and programming is creative"
+print(get_length_highest_frequency_word(input_string))  # Output: 11
