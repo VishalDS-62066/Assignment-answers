@@ -2,56 +2,92 @@ import requests
 import json
 import matplotlib.pyplot as plt
 
-# Fetching the data from the URL
+# Step 1: Fetching data from the URL
 url = "https://raw.githubusercontent.com/Biuni/PokemonGO-Pokedex/master/pokedex.json"
 response = requests.get(url)
 data = json.loads(response.text)
 
+# Step 2: Extracting necessary information
+pokemons = data["pokemon"]
+
 # Question 1: Get all Pokemons whose spawn rate is less than 5%
-spawn_rate_threshold = 0.05
-spawn_rate_filtered_pokemons = [pokemon for pokemon in data['pokemon'] if pokemon['spawn_chance'] < spawn_rate_threshold]
+spawn_rate_less_than_5 = [pokemon["name"] for pokemon in pokemons if float(pokemon["spawn_chance"]) < 5]
 print("Pokemons with spawn rate less than 5%:")
-for pokemon in spawn_rate_filtered_pokemons:
-    print(pokemon['name'])
+print(spawn_rate_less_than_5)
 
 # Question 2: Get all Pokemons that have less than 4 weaknesses
-weakness_count_threshold = 4
-weakness_filtered_pokemons = [pokemon for pokemon in data['pokemon'] if len(pokemon['weaknesses']) < weakness_count_threshold]
+weakness_less_than_4 = [pokemon["name"] for pokemon in pokemons if len(pokemon["weaknesses"]) < 4]
 print("\nPokemons with less than 4 weaknesses:")
-for pokemon in weakness_filtered_pokemons:
-    print(pokemon['name'])
+print(weakness_less_than_4)
 
 # Question 3: Get all Pokemons that have no multipliers at all
-no_multiplier_pokemons = [pokemon for pokemon in data['pokemon'] if 'multipliers' not in pokemon]
+no_multipliers = [pokemon["name"] for pokemon in pokemons if not pokemon["multipliers"]]
 print("\nPokemons with no multipliers:")
-for pokemon in no_multiplier_pokemons:
-    print(pokemon['name'])
+print(no_multipliers)
 
 # Question 4: Get all Pokemons that do not have more than 2 evolutions
-evolution_count_threshold = 2
-evolution_filtered_pokemons = [pokemon for pokemon in data['pokemon'] if len(pokemon['next_evolution']) <= evolution_count_threshold]
-print("\nPokemons with 2 or fewer evolutions:")
-for pokemon in evolution_filtered_pokemons:
-    print(pokemon['name'])
+evolutions_less_than_2 = [pokemon["name"] for pokemon in pokemons if len(pokemon["next_evolution"]) <= 2]
+print("\nPokemons with less than or equal to 2 evolutions:")
+print(evolutions_less_than_2)
 
 # Question 5: Get all Pokemons whose spawn time is less than 300 seconds
-spawn_time_threshold = 300
-spawn_time_filtered_pokemons = [pokemon for pokemon in data['pokemon'] if int(pokemon['spawn_time'].split(':')[0]) < spawn_time_threshold]
+spawn_time_less_than_300 = [pokemon["name"] for pokemon in pokemons if int(pokemon["spawn_time"].split(":")[0]) < 5]
 print("\nPokemons with spawn time less than 300 seconds:")
-for pokemon in spawn_time_filtered_pokemons:
-    print(pokemon['name'])
+print(spawn_time_less_than_300)
 
-# Question 6: Get all Pokemons who have more than two types of capabilities
-types_count_threshold = 2
-types_filtered_pokemons = [pokemon for pokemon in data['pokemon'] if len(pokemon['type']) > types_count_threshold]
+# Question 6: Get all Pokemon who have more than two types of capabilities
+more_than_2_types = [pokemon["name"] for pokemon in pokemons if len(pokemon["type"]) > 2]
 print("\nPokemons with more than two types of capabilities:")
-for pokemon in types_filtered_pokemons:
-    print(pokemon['name'])
+print(more_than_2_types)
 
-# Additional: Plotting the spawn rate distribution
-spawn_rates = [pokemon['spawn_chance'] for pokemon in data['pokemon']]
-plt.hist(spawn_rates, bins=20)
-plt.xlabel('Spawn Rate')
-plt.ylabel('Frequency')
-plt.title('Spawn Rate Distribution')
+# Plotting the results
+
+# Bar plot for spawn rate less than 5%
+plt.figure(figsize=(10, 5))
+plt.bar(range(len(spawn_rate_less_than_5)), [float(pokemon["spawn_chance"]) for pokemon in pokemons if pokemon["name"] in spawn_rate_less_than_5])
+plt.xticks(range(len(spawn_rate_less_than_5)), spawn_rate_less_than_5, rotation=90)
+plt.xlabel("Pokemons")
+plt.ylabel("Spawn Rate (%)")
+plt.title("Pokemons with Spawn Rate Less Than 5%")
+plt.tight_layout()
+plt.show()
+
+# Bar plot for number of weaknesses less than 4
+plt.figure(figsize=(10, 5))
+plt.bar(range(len(weakness_less_than_4)), [len(pokemon["weaknesses"]) for pokemon in pokemons if pokemon["name"] in weakness_less_than_4])
+plt.xticks(range(len(weakness_less_than_4)), weakness_less_than_4, rotation=90)
+plt.xlabel("Pokemons")
+plt.ylabel("Number of Weaknesses")
+plt.title("Pokemons with Less Than 4 Weaknesses")
+plt.tight_layout()
+plt.show()
+
+# Bar plot for evolutions less than or equal to 2
+plt.figure(figsize=(10, 5))
+plt.bar(range(len(evolutions_less_than_2)), [len(pokemon["next_evolution"]) if pokemon["next_evolution"] else 0 for pokemon in pokemons if pokemon["name"] in evolutions_less_than_2])
+plt.xticks(range(len(evolutions_less_than_2)), evolutions_less_than_2, rotation=90)
+plt.xlabel("Pokemons")
+plt.ylabel("Number of Evolutions")
+plt.title("Pokemons with Less Than or Equal to 2 Evolutions")
+plt.tight_layout()
+plt.show()
+
+# Bar plot for spawn time less than 300 seconds
+plt.figure(figsize=(10, 5))
+plt.bar(range(len(spawn_time_less_than_300)), [int(pokemon["spawn_time"].split(":")[0]) * 60 + int(pokemon["spawn_time"].split(":")[1]) for pokemon in pokemons if pokemon["name"] in spawn_time_less_than_300])
+plt.xticks(range(len(spawn_time_less_than_300)), spawn_time_less_than_300, rotation=90)
+plt.xlabel("Pokemons")
+plt.ylabel("Spawn Time (seconds)")
+plt.title("Pokemons with Spawn Time Less Than 300 seconds")
+plt.tight_layout()
+plt.show()
+
+# Bar plot for more than two types of capabilities
+plt.figure(figsize=(10, 5))
+plt.bar(range(len(more_than_2_types)), [len(pokemon["type"]) for pokemon in pokemons if pokemon["name"] in more_than_2_types])
+plt.xticks(range(len(more_than_2_types)), more_than_2_types, rotation=90)
+plt.xlabel("Pokemons")
+plt.ylabel("Number of Types")
+plt.title("Pokemons with More Than Two Types of Capabilities")
+plt.tight_layout()
 plt.show()
