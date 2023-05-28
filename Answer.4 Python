@@ -1,0 +1,54 @@
+import requests                         #[Importing necessary libraries)
+import csv
+import json
+from datetime import datetime
+                
+def download_data(url):                   # function for downloading data from url
+    response = requests.get(url)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        print("Failed to download data.")
+        return None
+
+def convert_to_csv(data):
+    csv_data = []
+    for item in data:
+        csv_row = {
+            'Name of Earth Meteorite': item['name'],
+            'Meteorite': int(item['id']),
+            'nametype': item['nametype'],
+            'recclass': item['recclass'],
+            'mass': float(item['mass (g)']) if 'mass (g)' in item else None,
+            'year': parse_year(item['year']) if 'year' in item else None,
+            'reclat': float(item['reclat']) if 'reclat' in item else None,
+            'reclong': float(item['reclong']) if 'reclong' in item else None,
+            'point coordinates': parse_coordinates(item['geolocation']['coordinates']) if 'geolocation' in item else None
+        }
+        csv_data.append(csv_row)
+
+    return csv_data
+
+def parse_year(year):
+    try:
+        return datetime.strptime(year, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d")
+    except ValueError:
+        return None
+
+def parse_coordinates(coordinates):
+    return [int(coord) for coord in coordinates]
+
+def save_to_csv(data, filename):
+    fieldnames = data[0].keys()
+    with open(filename, 'w', newline='') as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(data)
+
+# Main program
+url = "https://data.nasa.gov/resource/y77d-th95.json"
+data = download_data(url)
+if data:
+    csv_data = convert_to_csv(data)
+    save_to_csv(csv_data, "meteorite_data.csv")
+    print("CSV file saved successfully.")
