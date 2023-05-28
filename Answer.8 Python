@@ -1,0 +1,94 @@
+import requests
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Fetch data from the API
+url = "http://api.tvmaze.com/singlesearch/shows?q=westworld&embed=episodes"
+response = requests.get(url)
+data = response.json()
+
+# Extract relevant information from the data
+season_ratings = {}
+episode_ratings = {}
+episode_names = {}
+episode_summaries = {}
+
+for episode in data["_embedded"]["episodes"]:
+    season = episode["season"]
+    rating = episode["rating"]["average"]
+    name = episode["name"]
+    summary = episode["summary"]
+    airdate = episode["airdate"]
+
+    if season not in season_ratings:
+        season_ratings[season] = []
+        episode_ratings[season] = []
+        episode_names[season] = []
+        episode_summaries[season] = []
+
+    season_ratings[season].append(rating)
+    episode_ratings[season].append(rating)
+    episode_names[season].append(name)
+    episode_summaries[season].append(summary)
+
+# Analyze overall ratings for each season
+seasons = list(season_ratings.keys())
+avg_ratings = [sum(season_ratings[season]) / len(season_ratings[season]) for season in seasons]
+
+# Plot the ratings for each season
+plt.figure(figsize=(10, 6))
+plt.bar(seasons, avg_ratings)
+plt.xlabel("Season")
+plt.ylabel("Average Rating")
+plt.title("Average Ratings for Each Season")
+plt.show()
+
+# Get episode names with average rating > 8 for every season
+high_rated_episodes = {}
+
+for season in episode_ratings:
+    high_rated_episodes[season] = [episode_names[season][i] for i, rating in enumerate(episode_ratings[season]) if rating > 8]
+
+# Print episode names with average rating > 8 for every season
+for season, episodes in high_rated_episodes.items():
+    print(f"Season {season}:")
+    print(episodes)
+    print()
+
+# Get episode names that aired before May 2019
+early_episodes = [name for names in episode_names.values() for name in names if airdate < "2019-05"]
+
+# Print episode names that aired before May 2019
+print("Episodes aired before May 2019:")
+print(early_episodes)
+print()
+
+# Get episode names with highest and lowest ratings for each season
+highest_rated_episodes = {}
+lowest_rated_episodes = {}
+
+for season in episode_ratings:
+    max_rating_idx = episode_ratings[season].index(max(episode_ratings[season]))
+    min_rating_idx = episode_ratings[season].index(min(episode_ratings[season]))
+    highest_rated_episodes[season] = episode_names[season][max_rating_idx]
+    lowest_rated_episodes[season] = episode_names[season][min_rating_idx]
+
+# Print episode names with highest and lowest ratings for each season
+for season in seasons:
+    print(f"Season {season}:")
+    print(f"Highest rated episode: {highest_rated_episodes[season]}")
+    print(f"Lowest rated episode: {lowest_rated_episodes[season]}")
+    print()
+
+# Get summaries for the most popular episode in each season (based on ratings)
+popular_episodes = {}
+
+for season in episode_summaries:
+    max_rating_idx = episode_ratings[season].index(max(episode_ratings[season]))
+    popular_episodes[season] = episode_summaries[season][max_rating_idx]
+
+# Print summaries for the most popular episode in each season
+for season, summary in popular_episodes.items():
+    print(f"Season {season}:")
+    print(summary)
+    print()
