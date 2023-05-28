@@ -1,0 +1,56 @@
+pip install requests
+pip install beautifulsoup4
+
+import requests
+import json
+from bs4 import BeautifulSoup
+
+# API link
+api_link = "http://api.tvmaze.com/singlesearch/shows?q=westworld&embed=episodes"
+
+# Send GET request to the API
+response = requests.get(api_link)
+
+# Check if the request was successful
+if response.status_code == 200:
+    # Parse the JSON response
+    data = json.loads(response.text)
+    
+    # Extract episode information
+    episodes = data["_embedded"]["episodes"]
+    
+    # Iterate over each episode
+    for episode in episodes:
+        # Extract required data attributes
+        episode_id = episode["id"]
+        episode_url = episode["url"]
+        episode_name = episode["name"]
+        episode_season = episode["season"]
+        episode_number = episode["number"]
+        episode_type = episode["type"]
+        episode_airdate = episode["airdate"]
+        episode_airtime = episode["airtime"]
+        episode_runtime = episode["runtime"]
+        episode_rating = episode["rating"]["average"]
+        episode_summary = BeautifulSoup(episode["summary"], "html.parser").text
+        episode_image_medium = episode["image"]["medium"]
+        episode_image_original = episode["image"]["original"]
+        
+        # Print the extracted data attributes
+        print("Episode ID:", episode_id)
+        print("Episode URL:", episode_url)
+        print("Episode Name:", episode_name)
+        print("Season:", episode_season)
+        print("Number:", episode_number)
+        print("Type:", episode_type)
+        print("Airdate:", episode_airdate)
+        print("Airtime:", episode_airtime)
+        print("Runtime:", episode_runtime)
+        print("Average Rating:", episode_rating)
+        print("Summary:", episode_summary)
+        print("Medium Image Link:", episode_image_medium)
+        print("Original Image Link:", episode_image_original)
+        print("----------------------------------------")
+
+else:
+    print("Error:", response.status_code)
