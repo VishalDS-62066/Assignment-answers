@@ -1,0 +1,57 @@
+import requests
+import json
+import matplotlib.pyplot as plt
+
+# Fetching the data from the URL
+url = "https://raw.githubusercontent.com/Biuni/PokemonGO-Pokedex/master/pokedex.json"
+response = requests.get(url)
+data = json.loads(response.text)
+
+# Question 1: Get all Pokemons whose spawn rate is less than 5%
+spawn_rate_threshold = 0.05
+spawn_rate_filtered_pokemons = [pokemon for pokemon in data['pokemon'] if pokemon['spawn_chance'] < spawn_rate_threshold]
+print("Pokemons with spawn rate less than 5%:")
+for pokemon in spawn_rate_filtered_pokemons:
+    print(pokemon['name'])
+
+# Question 2: Get all Pokemons that have less than 4 weaknesses
+weakness_count_threshold = 4
+weakness_filtered_pokemons = [pokemon for pokemon in data['pokemon'] if len(pokemon['weaknesses']) < weakness_count_threshold]
+print("\nPokemons with less than 4 weaknesses:")
+for pokemon in weakness_filtered_pokemons:
+    print(pokemon['name'])
+
+# Question 3: Get all Pokemons that have no multipliers at all
+no_multiplier_pokemons = [pokemon for pokemon in data['pokemon'] if 'multipliers' not in pokemon]
+print("\nPokemons with no multipliers:")
+for pokemon in no_multiplier_pokemons:
+    print(pokemon['name'])
+
+# Question 4: Get all Pokemons that do not have more than 2 evolutions
+evolution_count_threshold = 2
+evolution_filtered_pokemons = [pokemon for pokemon in data['pokemon'] if len(pokemon['next_evolution']) <= evolution_count_threshold]
+print("\nPokemons with 2 or fewer evolutions:")
+for pokemon in evolution_filtered_pokemons:
+    print(pokemon['name'])
+
+# Question 5: Get all Pokemons whose spawn time is less than 300 seconds
+spawn_time_threshold = 300
+spawn_time_filtered_pokemons = [pokemon for pokemon in data['pokemon'] if int(pokemon['spawn_time'].split(':')[0]) < spawn_time_threshold]
+print("\nPokemons with spawn time less than 300 seconds:")
+for pokemon in spawn_time_filtered_pokemons:
+    print(pokemon['name'])
+
+# Question 6: Get all Pokemons who have more than two types of capabilities
+types_count_threshold = 2
+types_filtered_pokemons = [pokemon for pokemon in data['pokemon'] if len(pokemon['type']) > types_count_threshold]
+print("\nPokemons with more than two types of capabilities:")
+for pokemon in types_filtered_pokemons:
+    print(pokemon['name'])
+
+# Additional: Plotting the spawn rate distribution
+spawn_rates = [pokemon['spawn_chance'] for pokemon in data['pokemon']]
+plt.hist(spawn_rates, bins=20)
+plt.xlabel('Spawn Rate')
+plt.ylabel('Frequency')
+plt.title('Spawn Rate Distribution')
+plt.show()
