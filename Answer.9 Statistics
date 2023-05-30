@@ -1,0 +1,25 @@
+## Let's perform the ANOVA test on the given data using Python:
+
+import pandas as pd
+import scipy.stats as stats
+
+# Create a DataFrame with the given data
+data = {
+    'Name': ['Karan', 'Deepa', 'Karthik', 'Chandan', 'Jeevan'],
+    'Exam1': [85, 70, 90, 75, 95],
+    'Exam2': [90, 80, 85, 70, 92],
+    'Final Exam': [92, 85, 88, 75, 96]
+}
+df = pd.DataFrame(data)
+
+# Perform the ANOVA test
+f_value, p_value = stats.f_oneway(df['Exam1'], df['Exam2'], df['Final Exam'])
+
+# Check the p-value to determine the result
+alpha = 0.05  # significance level
+if p_value < alpha:
+    print("The mean scores of the students are significantly different.")
+else:
+    print("The mean scores of the students are not significantly different.")
+    
+    
