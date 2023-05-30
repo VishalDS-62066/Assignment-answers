@@ -1,0 +1,14 @@
+import scipy.stats as stats
+
+# Difference in blood pressure
+blood_pressure_diff = [-10, -7, -2, -8, -8, -4, -8, -6, -5, -3, -6, -8, -7, -9, -6, -6, -6, -4, -4, -7, -4, -5, -7, -7, -3, -6, -7, -4, -5, -5, -5, -5, -6, -7, -6, -5, -4, -4, -6, -7, -6, -4, -4, -5, -6, -5, -6, -6, -3, -5, -5, -4, -6, -7, -7, -6, -4, -4, -6, -6, -5, -3, -5, -5, -4, -6, -7, -7, -6, -4, -4, -6, -6, -5, -3, -5, -5, -4, -6, -7, -7, -6, -4, -4, -6, -6, -5, -3, -5, -5, -4, -6, -7, -7, -6, -4, -4, -6, -6, -5, -6, -4, -4, -6, -7, -7, -6, -4, -4, -6, -6, -5]
+
+# Shapiro-Wilk test
+shapiro_test = stats.shapiro(blood_pressure_diff)
+p_value = shapiro_test.pvalue
+
+print("Shapiro-Wilk test p-value:", p_value)
+
+
+## Output ----->
+## Shapiro-Wilk test p-value: 0.000185117416549474
